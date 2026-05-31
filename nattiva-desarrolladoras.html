@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NATTIVA — DESARROLLADORAS ALIADAS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Lujo editorial: Cormorant Garamond (display) + Jost (body) -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070608;
+    --ink:#ECE6DD;
+    --ink-dim:#8a8178;
+    --accent:#c9a86a;          /* cambia por desarrolladora vía JS */
+    --glow:201,168,106;        /* mismo color en formato rgb */
+    --gap:950px;
+    --ease:cubic-bezier(.72,.02,.18,1);
+    --font-display:'Cormorant Garamond', serif;
+    --font-body:'Jost', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--bg)}
+  body{font-family:var(--font-body);color:var(--ink);-webkit-font-smoothing:antialiased;cursor:none}
+  @media (hover:none){body{cursor:auto}}
+
+  /* ---------- ATMÓSFERA ---------- */
+  .stage-bg{position:fixed;inset:0;z-index:0;transition:background 1.6s var(--ease);
+    background:
+      radial-gradient(120% 90% at 50% 38%, rgba(var(--glow),.16), transparent 55%),
+      radial-gradient(140% 120% at 50% 120%, #0d0c10 0%, #050406 60%), var(--bg)}
+  .vignette{position:fixed;inset:0;z-index:6;pointer-events:none;
+    box-shadow:inset 0 0 240px 60px rgba(0,0,0,.85);
+    background:radial-gradient(120% 120% at 50% 45%, transparent 55%, rgba(0,0,0,.55))}
+  .grain{position:fixed;inset:0;z-index:7;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .floor{position:fixed;left:0;right:0;bottom:0;height:34vh;z-index:1;pointer-events:none;
+    background:linear-gradient(to top, rgba(var(--glow),.10), transparent);transition:background 1.6s var(--ease)}
+  .floor::after{content:"";position:absolute;left:50%;bottom:9vh;width:60vw;height:1px;transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent,rgba(var(--glow),.45),transparent);filter:blur(.5px)}
+  #motes{position:fixed;inset:0;z-index:2;pointer-events:none}
+  .mote{position:absolute;border-radius:50%;background:rgba(var(--glow),.9);box-shadow:0 0 8px rgba(var(--glow),.8);
+    filter:blur(.3px);animation:drift linear infinite;transition:background 1.6s var(--ease),box-shadow 1.6s var(--ease)}
+  @keyframes drift{0%{transform:translateY(0) translateX(0);opacity:0}10%,90%{opacity:var(--o)}
+    100%{transform:translateY(-120vh) translateX(var(--dx));opacity:0}}
+
+  /* ---------- ESCENA 3D + CÁMARA ---------- */
+  .scene{position:fixed;inset:0;z-index:3;perspective:1500px;perspective-origin:50% 46%}
+  .camera{position:absolute;inset:0;transform-style:preserve-3d;
+    transition:transform 1.7s var(--ease);will-change:transform}
+  .rig{position:absolute;left:50%;top:48%;transform-style:preserve-3d;transition:transform .6s ease-out}
+  .item{position:absolute;left:0;top:0;transform-style:preserve-3d;cursor:pointer;
+    transition:opacity 1.2s var(--ease), filter 1.2s var(--ease)}
+
+  .halo{position:absolute;left:50%;top:46%;width:560px;height:560px;transform:translate(-50%,-50%);
+    border-radius:50%;pointer-events:none;transition:background 1.6s var(--ease);filter:blur(8px);
+    background:radial-gradient(circle, rgba(var(--glow),.42), rgba(var(--glow),.06) 45%, transparent 68%)}
+  .pool{position:absolute;left:50%;top:64%;transform:translate(-50%,0) rotateX(78deg);
+    width:300px;height:150px;border-radius:50%;pointer-events:none;transition:background 1.6s var(--ease);
+    filter:blur(12px);background:radial-gradient(circle, rgba(var(--glow),.5), transparent 62%)}
+
+  /* ---------- PLACA DE MARCA (logo de la desarrolladora) ---------- */
+  .plate{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:300px;height:300px;border-radius:8px;display:grid;place-items:center;text-align:center;
+    background:linear-gradient(160deg, rgba(var(--glow),.16), rgba(255,255,255,.03));
+    border:1px solid rgba(var(--glow),.55);backdrop-filter:blur(3px);
+    box-shadow:0 34px 70px rgba(0,0,0,.6), 0 0 90px rgba(var(--glow),.38), inset 0 0 46px rgba(var(--glow),.10);
+    transition:box-shadow 1.6s var(--ease), border-color 1.6s var(--ease)}
+  .plate::before{content:"";position:absolute;inset:14px;border:1px solid rgba(var(--glow),.28);border-radius:4px;pointer-events:none}
+  .plate .mono{display:block;font-family:var(--font-display);font-style:italic;font-weight:400;
+    font-size:118px;line-height:1;color:#fff;text-shadow:0 0 42px rgba(var(--glow),.6);transition:text-shadow 1.6s var(--ease)}
+  .plate .wm{display:block;font-family:var(--font-display);letter-spacing:5px;font-size:14px;
+    color:var(--ink-dim);margin-top:12px;text-transform:uppercase}
+  /* Cuando se carga un logo real (campo image), se muestra sobre una placa luminosa */
+  .plate.logo{background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02))}
+  .plate .lbox{display:grid;place-items:center;width:230px;height:150px;border-radius:6px;padding:22px;
+    background:linear-gradient(160deg,#f5f3f9,#e4e1ed);box-shadow:inset 0 0 22px rgba(0,0,0,.06)}
+  .plate .lbox img{max-width:100%;max-height:100%;width:auto;height:auto;display:block}
+
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .item.active .wrap{animation:float 6s ease-in-out infinite}
+
+  /* ---------- UI ---------- */
+  .ui{position:fixed;inset:0;z-index:8;pointer-events:none}
+  .ui *{pointer-events:auto}
+  header{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:26px 44px}
+  .brand{font-family:var(--font-display);font-weight:500;letter-spacing:7px;font-size:20px}
+  .brand small{display:block;font-family:var(--font-body);font-weight:300;font-size:8px;letter-spacing:5px;color:var(--ink-dim);text-align:center;margin-top:3px}
+  nav{display:flex;gap:34px;font-size:11px;letter-spacing:2.5px;font-weight:300;color:var(--ink-dim)}
+  nav a{color:inherit;text-decoration:none;transition:color .4s}
+  nav a:hover{color:var(--ink)}
+  .variants{position:absolute;top:96px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;width:min(900px,92vw)}
+  .pill{display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:40px;border:1px solid rgba(255,255,255,.12);
+    font-size:10px;letter-spacing:1.8px;color:var(--ink-dim);background:rgba(255,255,255,.02);transition:.45s;backdrop-filter:blur(4px)}
+  .pill .dot{width:8px;height:8px;border-radius:50%}
+  .pill:hover{color:var(--ink);border-color:rgba(255,255,255,.3)}
+  .pill.on{color:#fff;border-color:rgba(var(--glow),.7);background:rgba(var(--glow),.08)}
+  .info{position:absolute;left:50%;bottom:18.5vh;transform:translateX(-50%);text-align:center;width:min(660px,86vw)}
+  .info .kicker{font-size:10px;letter-spacing:5px;color:var(--accent);transition:color 1.6s var(--ease);margin-bottom:14px}
+  .info h1{font-family:var(--font-display);font-weight:300;font-size:clamp(40px,7vw,76px);line-height:.95;letter-spacing:1px}
+  .info h1 em{font-style:italic;color:var(--accent);transition:color 1.6s var(--ease)}
+  .info .sub{font-weight:200;font-size:13px;letter-spacing:1px;color:var(--ink-dim);margin-top:14px}
+  .notes{display:flex;justify-content:center;gap:38px;margin-top:20px;font-size:9px;letter-spacing:2px;color:var(--ink-dim);flex-wrap:wrap}
+  .notes span b{display:block;color:var(--ink);font-weight:400;margin-top:5px;letter-spacing:1px;font-size:13px;font-family:var(--font-display)}
+  .swap-in{animation:swapIn 1s var(--ease) both}
+  @keyframes swapIn{0%{opacity:0;transform:translate(-50%,16px) scale(.98)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+  .cta{position:absolute;left:50%;bottom:9.2vh;transform:translateX(-50%)}
+  .cta button{cursor:none;font-family:var(--font-body);font-weight:300;letter-spacing:4px;font-size:11px;color:var(--ink);
+    background:transparent;border:1px solid rgba(var(--glow),.55);border-radius:40px;padding:15px 42px;position:relative;overflow:hidden;transition:.5s}
+  .cta button span{position:relative;z-index:2}
+  .cta button::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(var(--glow),.18);transform:translateY(101%);transition:.5s var(--ease)}
+  .cta button:hover{border-color:rgba(var(--glow),1);color:#fff}
+  .cta button:hover::before{transform:translateY(0)}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border:1px solid rgba(255,255,255,.14);
+    border-radius:50%;display:grid;place-items:center;color:var(--ink-dim);transition:.4s;background:rgba(0,0,0,.15);backdrop-filter:blur(4px)}
+  .arrow:hover{color:#fff;border-color:rgba(var(--glow),.8);box-shadow:0 0 24px rgba(var(--glow),.3)}
+  .arrow.prev{left:36px}.arrow.next{right:36px}.arrow svg{width:16px;height:16px}
+  .dots{position:absolute;left:50%;bottom:3.2vh;transform:translateX(-50%);display:flex;gap:14px;align-items:center}
+  .dots .d{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);transition:.5s;cursor:none}
+  .dots .d.on{width:30px;border-radius:6px;background:var(--accent)}
+  .counter{position:absolute;right:44px;bottom:3vh;font-size:11px;letter-spacing:3px;color:var(--ink-dim)}
+  .counter b{color:var(--ink);font-weight:400}
+  .cursor{position:fixed;z-index:20;top:0;left:0;width:34px;height:34px;border-radius:50%;border:1px solid rgba(var(--glow),.7);
+    transform:translate(-50%,-50%);pointer-events:none;transition:width .25s,height .25s,background .25s,border-color 1.6s var(--ease);mix-blend-mode:screen}
+  .cursor.big{width:60px;height:60px;background:rgba(var(--glow),.12)}
+  .cursor-dot{position:fixed;z-index:21;width:4px;height:4px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%);pointer-events:none;transition:background 1.6s var(--ease)}
+  .intro{position:fixed;inset:0;z-index:30;background:var(--bg);display:grid;place-items:center;transition:opacity 1.2s ease,visibility 1.2s}
+  .intro.gone{opacity:0;visibility:hidden}
+  .intro .il{font-family:var(--font-display);letter-spacing:10px;font-size:28px;opacity:0;animation:il 2.4s ease forwards}
+  @keyframes il{0%{opacity:0;letter-spacing:30px}30%{opacity:1}100%{opacity:1;letter-spacing:10px}}
+  @media (max-width:680px){header{padding:20px}nav{display:none}.brand{font-size:16px}.arrow.prev{left:10px}.arrow.next{right:10px}.counter{display:none}.notes{gap:24px}.plate{width:250px;height:250px}.plate .mono{font-size:96px}}
+</style>
+</head>
+<body>
+<div class="stage-bg"></div>
+<div class="floor"></div>
+<div id="motes"></div>
+<div class="scene"><div class="camera" id="camera"><div class="rig" id="rig"></div></div></div>
+<div class="vignette"></div><div class="grain"></div>
+
+<div class="ui">
+  <header>
+    <div class="brand">NATTIVA<small>DESARROLLADORAS ALIADAS</small></div>
+    <nav><a href="#">DESARROLLADORAS</a><a href="#">PROYECTOS</a><a href="#">CONTACTO</a></nav>
+  </header>
+  <div class="variants" id="variants"></div>
+  <div class="arrow prev" id="prev" data-cur><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M15 5l-7 7 7 7"/></svg></div>
+  <div class="arrow next" id="next" data-cur><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 5l7 7-7 7"/></svg></div>
+  <div class="info" id="info"></div>
+  <div class="cta"><button data-cur><span>AGENDAR VISITA</span></button></div>
+  <div class="dots" id="dots"></div>
+  <div class="counter" id="counter"></div>
+</div>
+<div class="cursor" id="cur"></div><div class="cursor-dot" id="curd"></div>
+<div class="intro" id="intro"><div class="il">NATTIVA</div></div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — una desarrolladora aliada por entrada.
+   Lista tomada del portafolio Nattiva.
+   ============================================================
+   • image: ruta/URL del LOGO real (idealmente PNG/SVG con fondo
+     transparente y buena resolución). Si está vacío, se muestra
+     una placa tipográfica con el monograma (mono) + nombre.
+     En cuanto pongas algo en "image", el logo reemplaza la placa.
+   • mono: monograma para la placa tipográfica (1–2 letras).
+   • accent/glow controlan el color de la luz por marca.
+*/
+const MARCA = "NATTIVA";
+const items = [
+  { kicker:"DESARROLLADORA ALIADA", n1:"", n2:"Edifica", mono:"E",
+    image:"",                       // <-- "logos/edifica.png"
+    accent:"#c9a86a", glow:"201,168,106",
+    sub:"Desarrolladora aliada de Nattiva con proyectos en venta en Surquillo, Lima.",
+    notes:[["DISTRITO","Surquillo"],["CIUDAD","Lima"],["PORTAFOLIO","En venta"]] },
+
+  { kicker:"DESARROLLADORA ALIADA", n1:"", n2:"Frontera", mono:"F",
+    image:"",                       // <-- "logos/frontera.png"
+    accent:"#3fa07a", glow:"63,160,122",
+    sub:"Aliada del portafolio Nattiva — vivienda contemporánea en Surquillo.",
+    notes:[["DISTRITO","Surquillo"],["CIUDAD","Lima"],["PORTAFOLIO","En venta"]] },
+
+  { kicker:"DESARROLLADORA ALIADA", n1:"Franca", n2:"Inmobiliaria", mono:"FI",
+    image:"",                       // <-- "logos/franca.png"
+    accent:"#8a6fe0", glow:"138,111,224",
+    sub:"Aliada del portafolio Nattiva — proyectos residenciales en Surquillo.",
+    notes:[["DISTRITO","Surquillo"],["CIUDAD","Lima"],["PORTAFOLIO","En venta"]] },
+
+  { kicker:"NUEVAS ALIANZAS", n1:"Más", n2:"próximamente", mono:"+",
+    image:"",
+    accent:"#5aa8d0", glow:"90,168,208",
+    sub:"Sumamos nuevas desarrolladoras de primer nivel al portafolio Nattiva.",
+    notes:[["DISTRITO","Surquillo"],["CIUDAD","Lima"],["ESTADO","Próximamente"]] }
+];
+/* ===========  Fin de la configuración  =========== */
+
+const GAP = 950;
+const stagger = items.map((_,i)=> i===0?0 : (i%2? 230 : -210));
+const yaw     = items.map((_,i)=> i===0?0 : (i%2? -10 : 10));
+let cur = 0;
+
+const rig=document.getElementById('rig');
+items.forEach((f,i)=>{
+  const b=document.createElement('div');
+  b.className='item'+(i===0?' active':'');
+  b.style.setProperty('--glow',f.glow);b.style.setProperty('--accent',f.accent);
+  b.style.transform=`translate3d(${stagger[i]}px,0,${-i*GAP}px) rotateY(${yaw[i]}deg)`;
+  const name=(f.n1?f.n1+' ':'')+f.n2;
+  const body = f.image
+    ? `<div class="plate logo"><span class="lbox"><img src="${f.image}" alt="${name}"></span></div>`
+    : `<div class="plate"><span class="mono">${f.mono}</span><span class="wm">${name}</span></div>`;
+  b.innerHTML=`<div class="halo"></div><div class="pool"></div><div class="wrap">${body}</div>`;
+  b.addEventListener('click',()=>go(i));
+  rig.appendChild(b);
+});
+const itemsEl=[...document.querySelectorAll('.item')];
+
+const variants=document.getElementById('variants');
+items.forEach((f,i)=>{const p=document.createElement('div');p.className='pill'+(i===0?' on':'');p.dataset.cur='';
+  p.innerHTML=`<span class="dot" style="background:${f.accent}"></span>${(f.n1?f.n1+' ':'')+f.n2}`;p.onclick=()=>go(i);variants.appendChild(p);});
+const dots=document.getElementById('dots');
+items.forEach((f,i)=>{const d=document.createElement('div');d.className='d'+(i===0?' on':'');d.dataset.cur='';d.onclick=()=>go(i);dots.appendChild(d);});
+
+const camera=document.getElementById('camera'),info=document.getElementById('info'),counter=document.getElementById('counter'),root=document.documentElement;
+function paint(i){const f=items[i];
+  root.style.setProperty('--accent',f.accent);root.style.setProperty('--glow',f.glow);
+  const heading = f.n1 ? `${f.n1} <em>${f.n2}</em>` : `<em>${f.n2}</em>`;
+  info.innerHTML=`<div class="kicker">${f.kicker}</div><h1>${heading}</h1>
+    <div class="sub">${f.sub}</div><div class="notes">${f.notes.map(n=>`<span>${n[0]}<b>${n[1]}</b></span>`).join('')}</div>`;
+  info.classList.remove('swap-in');void info.offsetWidth;info.classList.add('swap-in');
+  counter.innerHTML=`<b>0${i+1}</b> / 0${items.length}`;}
+function move(){
+  camera.style.transform=`translate3d(${-stagger[cur]}px,0,${cur*GAP}px)`;   // <-- el DOLLY de la cámara
+  itemsEl.forEach((b,i)=>{const dist=Math.abs(i-cur);b.classList.toggle('active',i===cur);
+    b.style.opacity=i===cur?1:Math.max(0,.55-dist*.18);b.style.filter=i===cur?'none':`blur(${dist*1.4}px)`;
+    b.style.transform=`translate3d(${stagger[i]}px,0,${-i*GAP}px) rotateY(${i===cur?0:yaw[i]}deg)`;});
+  document.querySelectorAll('.pill').forEach((p,i)=>p.classList.toggle('on',i===cur));
+  document.querySelectorAll('.dots .d').forEach((d,i)=>d.classList.toggle('on',i===cur));}
+function go(i){if(i===cur)return;cur=(i+items.length)%items.length;paint(cur);move();}
+
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('prev').onclick=()=>go(cur-1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);});
+addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>30)go(cur+(e.deltaY>0?1:-1));},{passive:true});
+addEventListener('mousemove',e=>{const x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);
+  rig.style.transform=`translate(-50%,-50%) rotateY(${x*5}deg) rotateX(${-y*3}deg)`;});
+
+const mc=document.getElementById('motes');
+for(let i=0;i<46;i++){const m=document.createElement('div');m.className='mote';const s=Math.random()*2.6+1;
+  m.style.width=m.style.height=s+'px';m.style.left=Math.random()*100+'vw';m.style.top=(Math.random()*100+100)+'vh';
+  m.style.setProperty('--o',(Math.random()*.6+.2).toFixed(2));m.style.setProperty('--dx',(Math.random()*120-60)+'px');
+  m.style.animationDuration=(Math.random()*18+14)+'s';m.style.animationDelay=(-Math.random()*30)+'s';mc.appendChild(m);}
+
+const c1=document.getElementById('cur'),cd=document.getElementById('curd');
+addEventListener('mousemove',e=>{c1.style.left=cd.style.left=e.clientX+'px';c1.style.top=cd.style.top=e.clientY+'px';});
+document.querySelectorAll('[data-cur]').forEach(el=>{el.addEventListener('mouseenter',()=>c1.classList.add('big'));el.addEventListener('mouseleave',()=>c1.classList.remove('big'));});
+
+paint(0);move();
+setTimeout(()=>document.getElementById('intro').classList.add('gone'),2600);
+</script>
+</body>
+</html>
